@@ -13,8 +13,10 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Allow Gymbro to use your camera to take gym photos.",
         "NSPhotoLibraryUsageDescription": "Allow Gymbro to access your photo library to pick images.",
-        "NSPhotoLibraryAddUsageDescription": "Allow Gymbro to save your posted photos."
-      }
+        "NSPhotoLibraryAddUsageDescription": "Allow Gymbro to save your posted photos.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.altux.gymbrocursor"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +28,12 @@
       "eas": {
         "projectId": "64ff02e0-457e-4d4f-986b-8ea9ea3488c7"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/64ff02e0-457e-4d4f-986b-8ea9ea3488c7"
     }
   }
 }
