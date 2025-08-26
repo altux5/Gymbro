@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Gymbro",
+    "slug": "gymbro-cursor",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow Gymbro to use your camera to take gym photos.",
+        "NSPhotoLibraryUsageDescription": "Allow Gymbro to access your photo library to pick images.",
+        "NSPhotoLibraryAddUsageDescription": "Allow Gymbro to save your posted photos."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#000000"
+      }
+    },
+    "web": {},
+    "extra": {
+      "eas": {
+        "projectId": "64ff02e0-457e-4d4f-986b-8ea9ea3488c7"
+      }
+    }
+  }
+}
