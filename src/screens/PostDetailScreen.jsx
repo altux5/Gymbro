@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { usePosts } from '../state/PostsContext';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { getStreakColor } from '../utils/constants';
+import { getStreakColor, getWorkoutEmoji } from '../utils/constants';
 import { computeDailyPostMap, computeCurrentStreak } from '../utils/streaks';
 import UnifiedHeader from '../components/UnifiedHeader';
+import ProfilePicture from '../components/ProfilePicture';
 
 export default function PostDetailScreen() {
   const { posts, users, addComment } = usePosts();
@@ -98,7 +99,9 @@ export default function PostDetailScreen() {
                   {/* User Header */}
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Image source={user.avatar} style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }} />
+                      <View style={{ marginRight: 12 }}>
+                        <ProfilePicture avatar={user.avatar} size={40} streakCount={postWithStreak.streak} />
+                      </View>
                       <View>
                         <Text style={{ color: 'white', fontWeight: '700', fontSize: 16 }}>{user.name}</Text>
                         <Text style={{ color: '#9ca3af', fontSize: 14 }}>@{user.handle}</Text>
@@ -134,48 +137,10 @@ export default function PostDetailScreen() {
                     overflow: 'hidden',
                     marginBottom: 16
                   }}>
-                    {/* Gradient background container */}
-                    <View style={{
-                      position: 'absolute',
-                      top: -6,
-                      left: -6,
-                      right: -6,
-                      bottom: -6,
-                      borderRadius: 22,
-                      backgroundColor: getStreakColor(post.streak),
-                    }} />
-                    
-                    {/* Photo container with gradient mask */}
-                    <View style={{
-                      position: 'absolute',
-                      top: 6,
-                      left: 6,
-                      right: 6,
-                      bottom: 6,
-                      borderRadius: 10,
-                      overflow: 'hidden',
-                    }}>
-                      <Image 
-                        source={typeof post.imageUri === 'string' ? { uri: post.imageUri } : post.imageUri} 
-                        style={{ width: '100%', height: '100%' }} 
-                      />
-                      
-                      {/* Gradient overlay for light effect */}
-                      <View style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        borderRadius: 10,
-                        backgroundColor: 'transparent',
-                        shadowColor: getStreakColor(post.streak),
-                        shadowOffset: { width: 0, height: 0 },
-                        shadowOpacity: 0.8,
-                        shadowRadius: 20,
-                        elevation: 15,
-                      }} />
-                    </View>
+                    <Image 
+                      source={typeof post.imageUri === 'string' ? { uri: post.imageUri } : post.imageUri} 
+                      style={{ width: '100%', height: '100%' }} 
+                    />
                     
                     {/* Certified tag day label */}
                     <View style={{
@@ -193,7 +158,7 @@ export default function PostDetailScreen() {
                         fontWeight: '600',
                         textTransform: 'uppercase'
                       }}>
-                        {postWithStreak.label} {postWithStreak.tag} day
+                        {getWorkoutEmoji(postWithStreak.tag)} {postWithStreak.label} {postWithStreak.tag} day
                       </Text>
                     </View>
                     
@@ -252,21 +217,19 @@ export default function PostDetailScreen() {
                 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                     {commentUser?.avatar ? (
-                      <Image 
-                        source={commentUser.avatar} 
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 18,
-                          marginRight: 12,
-                        }}
-                      />
+                      <View style={{ marginRight: 12 }}>
+                        <ProfilePicture 
+                          avatar={commentUser.avatar} 
+                          size={36}
+                          streakCount={commentUser.id === post.userId ? post.streak : 0}
+                        />
+                      </View>
                     ) : (
                       <View style={{
                         width: 36,
                         height: 36,
                         borderRadius: 18,
-                        backgroundColor: getStreakColor(post.streak),
+                        backgroundColor: getStreakColor(0),
                         marginRight: 12,
                         alignItems: 'center',
                         justifyContent: 'center',

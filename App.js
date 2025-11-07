@@ -11,6 +11,9 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import MyProfileScreen from './src/screens/MyProfileScreen';
 import PostDetailScreen from './src/screens/PostDetailScreen';
 import GymshotsScreen from './src/screens/GymshotsScreen';
+import BannerGalleryScreen from './src/screens/BannerGalleryScreen';
+import BannerCollectionScreen from './src/screens/BannerCollectionScreen';
+import EditProfileScreen from './src/screens/EditProfileScreen';
 import { PostsProvider } from './src/state/PostsContext';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -149,6 +152,18 @@ export default function App() {
             <Stack.Screen 
               name="Gymshots" 
               component={GymshotsScreen}
+            />
+            <Stack.Screen 
+              name="BannerGallery" 
+              component={BannerGalleryScreen}
+            />
+            <Stack.Screen 
+              name="BannerCollection" 
+              component={BannerCollectionScreen}
+            />
+            <Stack.Screen 
+              name="EditProfile" 
+              component={EditProfileScreen}
             />
           </Stack.Navigator>
         </NavigationContainer>

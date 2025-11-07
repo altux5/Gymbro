@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { Image, Text, View } from 'react-native';
-import { getStreakColor, toDateKey } from '../utils/constants';
+import { getStreakColor, toDateKey, getWorkoutEmoji } from '../utils/constants';
 
 function getMonthGrid(year, monthIndex) {
   const first = new Date(year, monthIndex, 1);
@@ -13,7 +13,7 @@ function getMonthGrid(year, monthIndex) {
   return cells;
 }
 
-export default function CalendarMonth({ posts, monthDate, onSelectDay }) {
+function CalendarMonth({ posts, monthDate, onSelectDay }) {
   const date = monthDate ? new Date(monthDate) : new Date();
   const year = date.getFullYear();
   const monthIndex = date.getMonth();
@@ -44,7 +44,7 @@ export default function CalendarMonth({ posts, monthDate, onSelectDay }) {
       </View>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {cells.map((d, idx) => {
-          if (!d) return <View key={idx} style={{ width: '14.2857%', aspectRatio: 1, padding: 2 }} />;
+          if (!d) return <View key={idx} style={{ width: '14.2857%', aspectRatio: 0.85, padding: 1 }} />;
           const key = toDateKey(d);
           const dayPosts = postsByDay[key] ?? [];
           const firstPost = dayPosts[0]; // This is now the chronologically first post for the day
@@ -53,22 +53,30 @@ export default function CalendarMonth({ posts, monthDate, onSelectDay }) {
           const borderColor = firstPost ? getStreakColor(firstPost.streak) : 'transparent';
           
           return (
-            <View key={key} style={{ width: '14.2857%', aspectRatio: 1, padding: 2 }}>
+            <View key={key} style={{ width: '14.2857%', aspectRatio: 0.85, padding: 1 }}>
               <View style={{ flex: 1, borderRadius: 6, borderWidth: firstPost ? 2 : 1, borderColor: firstPost ? borderColor : '#1f2937', overflow: 'hidden', backgroundColor: '#0b0f14' }}>
                 {firstPost ? (
                   <Image 
                     source={typeof firstPost.imageUri === 'string' ? { uri: firstPost.imageUri } : firstPost.imageUri} 
                     style={{ width: '100%', height: '100%' }} 
+                    resizeMode="cover"
+                    resizeMethod="resize"
+                    fadeDuration={0}
                   />
                 ) : null}
                 <View style={{ position: 'absolute', top: 4, right: 4, backgroundColor: '#00000080', paddingHorizontal: 4, borderRadius: 4 }}>
                   <Text style={{ color: 'white', fontSize: 10 }}>{d.getDate()}</Text>
                 </View>
+                {firstPost && (
+                  <View style={{ position: 'absolute', bottom: 4, left: 4 }}>
+                    <Text style={{ fontSize: 14 }}>{getWorkoutEmoji(firstPost.tag)}</Text>
+                  </View>
+                )}
               </View>
               <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }} pointerEvents="box-none">
                 <View style={{ flex: 1 }}
                   onStartShouldSetResponder={() => true}
-                  onResponderRelease={() => onSelectDay && onSelectDay({ date: d, posts: dayPosts })}
+                  onResponderRelease={() => onSelectDay && firstPost && onSelectDay(firstPost.id)}
                 />
               </View>
             </View>
@@ -78,5 +86,7 @@ export default function CalendarMonth({ posts, monthDate, onSelectDay }) {
     </View>
   );
 }
+
+export default memo(CalendarMonth);
 
 

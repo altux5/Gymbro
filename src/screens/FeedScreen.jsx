@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { FlatList, Image, Pressable, SafeAreaView, Text, View, StatusBar, TextInput, Modal, Animated, KeyboardAvoidingView, Platform } from 'react-native';
 import { usePosts } from '../state/PostsContext';
 import { useNavigation } from '@react-navigation/native';
-import { getStreakColor } from '../utils/constants';
+import { getStreakColor, getWorkoutEmoji } from '../utils/constants';
 import { computeDailyPostMap, computeCurrentStreak } from '../utils/streaks';
 import { BlurView } from 'expo-blur';
 import UnifiedHeader from '../components/UnifiedHeader';
+import ProfilePicture from '../components/ProfilePicture';
 
 function CommentsModal({ visible, onClose, post, user }) {
   const { addComment, users } = usePosts();
@@ -154,21 +155,19 @@ function CommentsModal({ visible, onClose, post, user }) {
                   }}>
                     <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
                       {commentUser?.avatar ? (
-                        <Image 
-                          source={commentUser.avatar} 
-                          style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: 16,
-                            marginRight: 12,
-                          }}
-                        />
+                        <View style={{ marginRight: 12 }}>
+                          <ProfilePicture 
+                            avatar={commentUser.avatar} 
+                            size={32}
+                            streakCount={commentUser.id === post.userId ? post.streak : 0}
+                          />
+                        </View>
                       ) : (
                         <View style={{
                           width: 32,
                           height: 32,
                           borderRadius: 16,
-                          backgroundColor: getStreakColor(post.streak),
+                          backgroundColor: getStreakColor(0),
                           marginRight: 12,
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -255,7 +254,9 @@ function PostCard({ post, user, onPressUser, onPressComments, onPressPost }) {
     <View style={{ marginBottom: 12, backgroundColor: '#0b0f14' }}>
       <Pressable onPress={onPressUser} style={{ paddingHorizontal: 12, paddingTop: 12, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={user.avatar} style={{ width: 32, height: 32, borderRadius: 16, marginRight: 8 }} />
+          <View style={{ marginRight: 8 }}>
+            <ProfilePicture avatar={user.avatar} size={32} streakCount={post.streak} />
+          </View>
           <View>
             <Text style={{ color: 'white', fontWeight: '700' }}>{user.name}</Text>
             <Text style={{ color: '#9ca3af', fontSize: 12 }}>@{user.handle}</Text>
@@ -289,48 +290,10 @@ function PostCard({ post, user, onPressUser, onPressComments, onPressPost }) {
           borderRadius: 16,
           overflow: 'hidden'
         }}>
-          {/* Gradient background container */}
-          <View style={{
-            position: 'absolute',
-            top: -6,
-            left: -6,
-            right: -6,
-            bottom: -6,
-            borderRadius: 22,
-            backgroundColor: getStreakColor(post.streak),
-          }} />
-          
-          {/* Photo container with gradient mask */}
-          <View style={{
-            position: 'absolute',
-            top: 6,
-            left: 6,
-            right: 6,
-            bottom: 6,
-            borderRadius: 10,
-            overflow: 'hidden',
-          }}>
-            <Image 
-              source={typeof post.imageUri === 'string' ? { uri: post.imageUri } : post.imageUri} 
-              style={{ width: '100%', height: '100%' }} 
-            />
-            
-            {/* Gradient overlay for light effect */}
-            <View style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: 10,
-              backgroundColor: 'transparent',
-              shadowColor: getStreakColor(post.streak),
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.8,
-              shadowRadius: 20,
-              elevation: 15,
-            }} />
-          </View>
+          <Image 
+            source={typeof post.imageUri === 'string' ? { uri: post.imageUri } : post.imageUri} 
+            style={{ width: '100%', height: '100%' }} 
+          />
           
           {/* Certified tag day label */}
           <View style={{
@@ -348,7 +311,7 @@ function PostCard({ post, user, onPressUser, onPressComments, onPressPost }) {
               fontWeight: '600',
               textTransform: 'uppercase'
             }}>
-              {post.label} {post.tag} day
+              {getWorkoutEmoji(post.tag)} {post.label} {post.tag} day
             </Text>
           </View>
           
@@ -469,7 +432,12 @@ export default function FeedScreen() {
             post={item}
             user={users[item.userId]}
             onPressUser={() => {
-              navigation.navigate('Profile', { userId: item.userId, userName: users[item.userId]?.name });
+              // If clicking on current user, navigate to My Profile tab
+              if (item.userId === 'me') {
+                navigation.navigate('My Profile');
+              } else {
+                navigation.navigate('Profile', { userId: item.userId, userName: users[item.userId]?.name });
+              }
             }}
             onPressComments={handlePressComments}
             onPressPost={() => navigation.navigate('PostDetail', { postId: item.id })}

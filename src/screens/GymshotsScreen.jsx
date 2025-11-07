@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { FlatList, Image, Pressable, SafeAreaView, Text, View } from 'react-native';
 import { usePosts } from '../state/PostsContext';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { getStreakColor } from '../utils/constants';
+import { getStreakColor, getWorkoutEmoji } from '../utils/constants';
 import { computeDailyPostMap, computeCurrentStreak } from '../utils/streaks';
 import UnifiedHeader from '../components/UnifiedHeader';
 
@@ -44,48 +44,10 @@ export default function GymshotsScreen() {
           borderRadius: 16,
           overflow: 'hidden'
         }}>
-          {/* Gradient background container */}
-          <View style={{
-            position: 'absolute',
-            top: -6,
-            left: -6,
-            right: -6,
-            bottom: -6,
-            borderRadius: 22,
-            backgroundColor: getStreakColor(item.streak),
-          }} />
-          
-          {/* Photo container with gradient mask */}
-          <View style={{
-            position: 'absolute',
-            top: 6,
-            left: 6,
-            right: 6,
-            bottom: 6,
-            borderRadius: 10,
-            overflow: 'hidden',
-          }}>
-            <Image 
-              source={typeof item.imageUri === 'string' ? { uri: item.imageUri } : item.imageUri} 
-              style={{ width: '100%', height: '100%' }} 
-            />
-            
-            {/* Gradient overlay for light effect */}
-            <View style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              borderRadius: 10,
-              backgroundColor: 'transparent',
-              shadowColor: getStreakColor(item.streak),
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.8,
-              shadowRadius: 20,
-              elevation: 15,
-            }} />
-          </View>
+          <Image 
+            source={typeof item.imageUri === 'string' ? { uri: item.imageUri } : item.imageUri} 
+            style={{ width: '100%', height: '100%' }} 
+          />
           
           {/* Certified tag day label */}
           <View style={{
@@ -103,7 +65,7 @@ export default function GymshotsScreen() {
               fontWeight: '600',
               textTransform: 'uppercase'
             }}>
-              {item.label} {item.tag} day
+              {getWorkoutEmoji(item.tag)} {item.label} {item.tag} day
             </Text>
           </View>
           <View style={{ 

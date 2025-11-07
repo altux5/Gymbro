@@ -78,7 +78,7 @@ const sampleComments = [
 ];
 
 // Create specific posts for each user with dedicated days
-const createUserPosts = (userId, photos, startDayOffset = 0) => {
+const createUserPosts = (userId, photos, totalPosts, startDayOffset = 0) => {
   const tags = ['pull', 'push', 'leg', 'fullBody', 'cardio', 'broSplit'];
   const labels = ['certified', 'clinic', 'critical', 'bombastic', 'deep', 'solid', 'hard', 'easy', 'chill'];
   const captions = [
@@ -96,7 +96,8 @@ const createUserPosts = (userId, photos, startDayOffset = 0) => {
     'Rest day mobility'
   ];
   
-  return photos.map((photo, index) => {
+  return Array.from({ length: totalPosts }).map((_, index) => {
+    const photo = photos[index % photos.length]; // Cycle through available photos
     const daysAgo = startDayOffset + (index * 2); // Spread posts every 2 days
     const hoursAgo = daysAgo * 24 + (index * 3); // Add some hour variation
     
@@ -124,9 +125,10 @@ const createUserPosts = (userId, photos, startDayOffset = 0) => {
 };
 
 // Create posts for each user without streak numbers
-const mePosts = createUserPosts('me', userPhotos.me, 0);
-const u1Posts = createUserPosts('u1', userPhotos.u1, 1);
-const u2Posts = createUserPosts('u2', userPhotos.u2, 2);
+// Total posts should equal the user's streak level
+const mePosts = createUserPosts('me', userPhotos.me, 34, 0);
+const u1Posts = createUserPosts('u1', userPhotos.u1, 164, 1);
+const u2Posts = createUserPosts('u2', userPhotos.u2, 6, 2);
 
 // Combine all posts and sort by creation date (newest first)
 const seedPosts = [...mePosts, ...u1Posts, ...u2Posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -144,16 +146,9 @@ seedPosts.forEach(post => {
 // Assign streak numbers to each user's posts
 Object.keys(postsByUser).forEach(userId => {
   const userPosts = postsByUser[userId];
-  let initialStreak;
   
-  // Set initial streak based on user
-  if (userId === 'me') {
-    initialStreak = 32;
-  } else if (userId === 'u1') {
-    initialStreak = 160;
-  } else if (userId === 'u2') {
-    initialStreak = 3;
-  }
+  // Start all users from streak 1, so the highest streak equals total posts
+  const initialStreak = 1;
   
   // Assign streak numbers (most recent posts get highest streak)
   // Since userPosts is already sorted newest first, we need to reverse the assignment
